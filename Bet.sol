@@ -15,8 +15,9 @@ contract Bet is Ownable, AccessControl  {
     }
     struct Round {
         Position positionWin;
+        uint48 homeId;
+        uint48 awayId;
         uint256 timeCreatePrediction;
-        uint256 timeStartPerdiction;
         uint256 timeLockPrediction;
         uint256 timeEndPrediction;
         uint256 amountHome;
@@ -47,6 +48,11 @@ contract Bet is Ownable, AccessControl  {
         _;
     }
 
+    modifier roundLock(uint256 _roundId) {
+        require(round[_roundId].timeLockPrediction < block.timestamp , "Round is Lock");
+        _;
+    }
+
     modifier checkRound(uint256 _roundId) {
         require(round[_roundId].timeCreatePrediction > 0, "Not have Round");
         _;
@@ -58,7 +64,7 @@ contract Bet is Ownable, AccessControl  {
     }
 
     modifier checkHasPrediction(uint256 _roundId) {
-        require(round[_roundId].positionWin != Position.None, "You already Prediction");
+        require(userPrediction[_roundId][msg.sender].positionPredict == Position.None, "You already Prediction");
         _;
     }
 
@@ -66,15 +72,16 @@ contract Bet is Ownable, AccessControl  {
         _grantRole(DEFAULT_ADMIN_ROLE , msg.sender);
     }
 
-    function createRound(uint8 homeId, uint8 awayId,uint256 timeStartPerdiction, uint256 timeLockPrediction, uint256 timeEndPrediction) public onlyRole(ADMIN_ROLE) {
+    function createRound(uint8 homeId, uint8 awayId, uint256 timeLockPrediction, uint256 timeEndPrediction) public onlyRole(ADMIN_ROLE) {
         require(homeId != awayId, "Can not Add id same OR homeId and is not 1");
-        require(timeStartPerdiction > timeEndPrediction, "Time Over");
+        require(timeEndPrediction > block.timestamp, "Time Over");
         roundId++;
         Round storage roundCurrent = round[roundId];
+        roundCurrent.homeId = homeId;
+        roundCurrent.awayId = awayId;
         roundCurrent.positionWin = Position.None;
         roundCurrent.timeLockPrediction = timeLockPrediction;
         roundCurrent.timeCreatePrediction = block.timestamp;
-        roundCurrent.timeStartPerdiction = timeStartPerdiction;
         roundCurrent.timeEndPrediction = (timeEndPrediction + (8 * 60));
     }
 
@@ -86,9 +93,9 @@ contract Bet is Ownable, AccessControl  {
         round[_roundId].positionWin = position;
     }
 
-    function predictionHome(uint256 _roundId, uint256 amount) public minmumPrediction(amount) checkHasPrediction(_roundId) {
-        Round storage roundCurent = round[_roundId];
-        roundCurent.amountHome = SafeMath.add(roundCurent.amountHome, amount);
+    function predictionHome(uint256 _roundId, uint256 amount) public minmumPrediction(amount) checkHasPrediction(_roundId) roundLock(_roundId)  {
+        Round storage roundCurrent = round[_roundId];
+        roundCurrent.amountHome = SafeMath.add(roundCurrent.amountHome, amount);
         Prediction storage prediction  = userPrediction[_roundId][msg.sender];
         prediction.positionPredict = Position.Home;
         prediction.roundId = _roundId;
@@ -96,9 +103,9 @@ contract Bet is Ownable, AccessControl  {
         prediction.isClaimed = false;
     }
 
-    function predictionAway(uint256 _roundId, uint256 amount) public minmumPrediction(amount) checkHasPrediction(_roundId) {
-        Round storage roundCurent = round[_roundId];
-        roundCurent.amountAway = SafeMath.add(roundCurent.amountAway, amount);
+    function predictionAway(uint256 _roundId, uint256 amount) public minmumPrediction(amount) checkHasPrediction(_roundId) roundLock(_roundId) {
+        Round storage roundCurrent = round[_roundId];
+        roundCurrent.amountAway = SafeMath.add(roundCurrent.amountAway, amount);
         Prediction storage prediction  = userPrediction[_roundId][msg.sender];
         prediction.positionPredict = Position.Away;
         prediction.roundId = _roundId;
@@ -106,9 +113,9 @@ contract Bet is Ownable, AccessControl  {
         prediction.isClaimed = false;
     }
 
-    function predictionDraw(uint256 _roundId, uint256 amount) public minmumPrediction(amount) checkHasPrediction(_roundId) {
-        Round storage roundCurent = round[_roundId];
-        roundCurent.amountDraw = SafeMath.add(roundCurent.amountDraw, amount);
+    function predictionDraw(uint256 _roundId, uint256 amount) public minmumPrediction(amount) checkHasPrediction(_roundId) roundLock(_roundId) {
+        Round storage roundCurrent = round[_roundId];
+        roundCurrent.amountDraw = SafeMath.add(roundCurrent.amountDraw, amount);
         Prediction storage prediction  = userPrediction[_roundId][msg.sender];
         prediction.positionPredict = Position.Draw;
         prediction.roundId = _roundId;
@@ -122,6 +129,16 @@ contract Bet is Ownable, AccessControl  {
         require(userPrediction[roundId][msg.sender].positionPredict == round[roundId].positionWin, "You Lose");
         require(!userPrediction[roundId][msg.sender].isClaimed ,"You already claim");
         userPrediction[roundId][msg.sender].isClaimed = true;
+    }
+
+    function getRoundOnRun() public view returns (uint [] memory) {
+        uint256[] memory roundIdOnRun = new uint256[](roundId);
+        for(uint i = 0; i < roundId; i++) {
+            if(round[i+1].positionWin == Position.None) {
+                roundIdOnRun[i] = i + 1 ;
+            }
+        }
+        return roundIdOnRun;
     }
 
     function getUserRound(address _address) public view returns(uint256[] memory) {
