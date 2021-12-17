@@ -140,8 +140,9 @@ contract Bet is Ownable, AccessControl  {
         userPrediction[roundId][msg.sender].isClaimed = true;
     }
 
-    function claimReward(uint _roundId, address _address) public {
+    function claimReward(uint _roundId, address _address) public checkRound(_roundId) {
         require(round[_roundId].timeEndPrediction < block.timestamp, "match is not end");
+        require(userPrediction[_roundId][_address].positionPredict == Position.None, "Waiting Result");
         require(userPrediction[_roundId][_address].amount > 0, "You not prediction");
         require(userPrediction[_roundId][_address].positionPredict == round[roundId].positionWin, "You Lose");
         require(!userPrediction[_roundId][_address].isClaimed ,"You already claim");
