@@ -124,6 +124,31 @@
 				"type": "event"
 			},
 			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "timeLock",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "timeNow",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "timeEnd",
+						"type": "uint256"
+					}
+				],
+				"name": "Time",
+				"type": "event"
+			},
+			{
 				"inputs": [],
 				"name": "ADMIN_ROLE",
 				"outputs": [
@@ -157,7 +182,18 @@
 				"type": "function"
 			},
 			{
-				"inputs": [],
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_roundId",
+						"type": "uint256"
+					},
+					{
+						"internalType": "address",
+						"name": "_address",
+						"type": "address"
+					}
+				],
 				"name": "claimReward",
 				"outputs": [],
 				"stateMutability": "nonpayable",
@@ -176,14 +212,14 @@
 						"type": "uint8"
 					},
 					{
-						"internalType": "uint256",
+						"internalType": "uint32",
 						"name": "timeLockPrediction",
-						"type": "uint256"
+						"type": "uint32"
 					},
 					{
-						"internalType": "uint256",
+						"internalType": "uint32",
 						"name": "timeEndPrediction",
-						"type": "uint256"
+						"type": "uint32"
 					}
 				],
 				"name": "createRound",
@@ -441,6 +477,21 @@
 						"type": "uint8"
 					},
 					{
+						"internalType": "uint32",
+						"name": "timeCreatePrediction",
+						"type": "uint32"
+					},
+					{
+						"internalType": "uint32",
+						"name": "timeLockPrediction",
+						"type": "uint32"
+					},
+					{
+						"internalType": "uint32",
+						"name": "timeEndPrediction",
+						"type": "uint32"
+					},
+					{
 						"internalType": "uint48",
 						"name": "homeId",
 						"type": "uint48"
@@ -449,21 +500,6 @@
 						"internalType": "uint48",
 						"name": "awayId",
 						"type": "uint48"
-					},
-					{
-						"internalType": "uint256",
-						"name": "timeCreatePrediction",
-						"type": "uint256"
-					},
-					{
-						"internalType": "uint256",
-						"name": "timeLockPrediction",
-						"type": "uint256"
-					},
-					{
-						"internalType": "uint256",
-						"name": "timeEndPrediction",
-						"type": "uint256"
 					},
 					{
 						"internalType": "uint256",
@@ -478,6 +514,11 @@
 					{
 						"internalType": "uint256",
 						"name": "amountDraw",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "totalAmount",
 						"type": "uint256"
 					}
 				],
@@ -715,6 +756,14 @@
 				"dweb:/ipfs/QmP7C3CHdY9urF4dEMb9wmsp1wMxHF6nhA2yQE5SKiPAdy"
 			]
 		},
+		"@openzeppelin/contracts/utils/math/SafeCast.sol": {
+			"keccak256": "0x5c6caab697d302ad7eb59c234a4d2dbc965c1bae87709bd2850060b7695b28c7",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://fb62abcee612c175f1b9bc70e5dfe5bd23473c99987ade6e80e291f68dc60ff1",
+				"dweb:/ipfs/QmZCMajhG7FtRYNDwBchXN89mXR6HLPVzr9732qfUdNf9E"
+			]
+		},
 		"@openzeppelin/contracts/utils/math/SafeMath.sol": {
 			"keccak256": "0xa2f576be637946f767aa56601c26d717f48a0aff44f82e46f13807eea1009a21",
 			"license": "MIT",
@@ -724,11 +773,11 @@
 			]
 		},
 		"Bet.sol": {
-			"keccak256": "0x02308cf20bb9c8b8a5b417538e432b3fd0674d303d1e89b5bd21225f468ea3e8",
+			"keccak256": "0x28e14ac34ed8b1bf790258182cef4f58dca69fda111edca71c0064dbf8e865ee",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://9325077577c7c321d8d3f67b04261d9d669aa2630b47db10adb62d54de602e8b",
-				"dweb:/ipfs/QmWHhJzuQy72nUT8s4mCA4FVukwqYD27tKuCCJrGixa7Mk"
+				"bzz-raw://30615d8df45fd81f4d0a7eec4b3fc0ecb1bb89582b56e2e0dd1e0f578e9afca9",
+				"dweb:/ipfs/QmVoTarWyEAz6euU4ixitxZss8k9yVndfmQEFYiTKZeeR6"
 			]
 		}
 	},

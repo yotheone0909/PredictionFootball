@@ -24,6 +24,7 @@ contract Bet is Ownable, AccessControl  {
         uint256 amountHome;
         uint256 amountAway;
         uint256 amountDraw;
+        uint256 totalAmount;
     }
     struct Prediction {
         bool isClaimed;
@@ -102,10 +103,11 @@ contract Bet is Ownable, AccessControl  {
     function predictionHome(uint256 _roundId, uint256 amount) public minmumPrediction(amount) checkHasPrediction(_roundId) roundLock(_roundId)  {
         Round storage roundCurrent = round[_roundId];
         roundCurrent.amountHome = roundCurrent.amountHome.add(amount);
+        roundCurrent.totalAmount = roundCurrent.totalAmount.add(amount);
         Prediction storage prediction  = userPrediction[_roundId][msg.sender];
         prediction.positionPredict = Position.Home;
         prediction.roundId = _roundId;
-        prediction.amount = SafeMath.add(prediction.amount, amount);
+        prediction.amount = prediction.amount.add(amount);
         prediction.isClaimed = false;
         userRound[msg.sender].push(_roundId);
     }
@@ -113,6 +115,7 @@ contract Bet is Ownable, AccessControl  {
     function predictionAway(uint256 _roundId, uint256 amount) public minmumPrediction(amount) checkHasPrediction(_roundId) roundLock(_roundId) {
         Round storage roundCurrent = round[_roundId];
         roundCurrent.amountAway = roundCurrent.amountAway.add(amount);
+        roundCurrent.totalAmount = roundCurrent.totalAmount.add(amount);
         Prediction storage prediction  = userPrediction[_roundId][msg.sender];
         prediction.positionPredict = Position.Away;
         prediction.roundId = _roundId;
@@ -124,20 +127,13 @@ contract Bet is Ownable, AccessControl  {
     function predictionDraw(uint256 _roundId, uint256 amount) public minmumPrediction(amount) checkHasPrediction(_roundId) roundLock(_roundId) {
         Round storage roundCurrent = round[_roundId];
         roundCurrent.amountDraw = roundCurrent.amountDraw.add(amount);
+        roundCurrent.totalAmount = roundCurrent.totalAmount.add(amount);
         Prediction storage prediction  = userPrediction[_roundId][msg.sender];
         prediction.positionPredict = Position.Draw;
         prediction.roundId = _roundId;
         prediction.amount = SafeMath.add(prediction.amount, amount);
         prediction.isClaimed = false;
         userRound[msg.sender].push(_roundId);
-    }
-
-    function claimReward() public {
-        require(round[roundId].timeEndPrediction < block.timestamp, "match is not end");
-        require(userPrediction[roundId][msg.sender].amount > 0, "You not prediction");
-        require(userPrediction[roundId][msg.sender].positionPredict == round[roundId].positionWin, "You Lose");
-        require(!userPrediction[roundId][msg.sender].isClaimed ,"You already claim");
-        userPrediction[roundId][msg.sender].isClaimed = true;
     }
 
     function claimReward(uint _roundId, address _address) public checkRound(_roundId) {
@@ -147,6 +143,26 @@ contract Bet is Ownable, AccessControl  {
         require(userPrediction[_roundId][_address].positionPredict == round[roundId].positionWin, "You Lose");
         require(!userPrediction[_roundId][_address].isClaimed ,"You already claim");
         userPrediction[_roundId][_address].isClaimed = true;
+
+        if(userPrediction[_roundId][_address].positionPredict == Position.Refund) {
+            userPrediction[_roundId][_address].amount;
+        } else if(userPrediction[_roundId][_address].positionPredict == round[_roundId].positionWin) {
+            // Home Win
+            if(round[_roundId].positionWin == Position.Home) {
+                uint totalAmount = round[_roundId].totalAmount;
+                uint amountHome = round[_roundId].amountHome;
+            } 
+            // Away Win
+            else if(round[_roundId].positionWin == Position.Away) {
+                uint totalAmount = round[_roundId].totalAmount;
+                uint amountAway = round[_roundId].amountAway;
+            } 
+            // Draw Win
+            else if(round[_roundId].positionWin == Position.Draw) {
+                uint totalAmount = round[_roundId].totalAmount;
+                uint amountDraw = round[_roundId].amountDraw;
+            }
+        }
     }
 
     function getRoundOnRun() public view returns (uint [] memory) {
