@@ -44,7 +44,7 @@ contract Bet is Ownable, AccessControl  {
 
     uint roundId = 0;
 
-    event Claim(Position Userprediction, Position roundWin);
+    event Claim(address _address, uint round, uint256 reward);
 
     event Time(uint256 timeLock, uint256 timeNow, uint256 timeEnd);
 
@@ -137,8 +137,8 @@ contract Bet is Ownable, AccessControl  {
     }
 
     function claimReward(uint _roundId, address _address) public checkRound(_roundId) {
-        require(round[_roundId].timeEndPrediction < block.timestamp, "match is not end");
-        require(userPrediction[_roundId][_address].positionPredict == Position.None, "Waiting Result");
+        require(round[_roundId].timeEndPrediction < block.timestamp, "Match is not end");
+        require(userPrediction[_roundId][_address].positionPredict != Position.None, "This round you did not prediction");
         require(userPrediction[_roundId][_address].amount > 0, "You not prediction");
         require(userPrediction[_roundId][_address].positionPredict == round[roundId].positionWin, "You Lose");
         require(!userPrediction[_roundId][_address].isClaimed ,"You already claim");
@@ -151,16 +151,28 @@ contract Bet is Ownable, AccessControl  {
             if(round[_roundId].positionWin == Position.Home) {
                 uint totalAmount = round[_roundId].totalAmount;
                 uint amountHome = round[_roundId].amountHome;
+                uint userAmount = userPrediction[_roundId][_address].amount;
+                uint256 reward = (userAmount * totalAmount) / amountHome;
+
+                emit Claim(_address, _roundId, reward);
             } 
             // Away Win
             else if(round[_roundId].positionWin == Position.Away) {
                 uint totalAmount = round[_roundId].totalAmount;
                 uint amountAway = round[_roundId].amountAway;
+                uint userAmount = userPrediction[_roundId][_address].amount;
+                uint256 reward = (userAmount * totalAmount) / amountAway;
+
+                emit Claim(_address, _roundId, reward);
             } 
             // Draw Win
             else if(round[_roundId].positionWin == Position.Draw) {
                 uint totalAmount = round[_roundId].totalAmount;
                 uint amountDraw = round[_roundId].amountDraw;
+                uint userAmount = userPrediction[_roundId][_address].amount;
+                uint256 reward = (userAmount * totalAmount) / amountDraw;
+
+                emit Claim(_address, _roundId, reward);
             }
         }
     }
@@ -177,9 +189,5 @@ contract Bet is Ownable, AccessControl  {
 
     function getUserRound(address _address) public view returns(uint256[] memory) {
         return userRound[_address];
-    }
-
-    function check() public {
-        emit Claim(userPrediction[roundId][msg.sender].positionPredict, round[roundId].positionWin);
     }
 }
