@@ -1,10 +1,12 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.6;
+pragma solidity ^0.8.10;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 contract Bet is Ownable, AccessControl  {
     enum Position {
@@ -34,7 +36,10 @@ contract Bet is Ownable, AccessControl  {
     }
 
     using SafeMath for uint256;
-    using SafeCast for uint256;
+    using SafeCast for uint256;   
+    using SafeERC20 for IERC20;    
+
+    IERC20 token;
 
     bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
 
@@ -73,7 +78,8 @@ contract Bet is Ownable, AccessControl  {
         _;
     }
 
-    constructor() {
+    constructor(IERC20 _token) {
+        token = _token;
         _grantRole(DEFAULT_ADMIN_ROLE , msg.sender);
     }
 
@@ -110,6 +116,9 @@ contract Bet is Ownable, AccessControl  {
         prediction.amount = prediction.amount.add(amount);
         prediction.isClaimed = false;
         userRound[msg.sender].push(_roundId);
+
+        // send amount
+        token.safeTransferFrom(msg.sender, address(this), amount);
     }
 
     function predictionAway(uint256 _roundId, uint256 amount) public minmumPrediction(amount) checkHasPrediction(_roundId) roundLock(_roundId) {
@@ -122,6 +131,9 @@ contract Bet is Ownable, AccessControl  {
         prediction.amount = SafeMath.add(prediction.amount, amount);
         prediction.isClaimed = false;
         userRound[msg.sender].push(_roundId);
+
+        // send amount
+        token.safeTransferFrom(msg.sender, address(this), amount);
     }
 
     function predictionDraw(uint256 _roundId, uint256 amount) public minmumPrediction(amount) checkHasPrediction(_roundId) roundLock(_roundId) {
@@ -134,15 +146,17 @@ contract Bet is Ownable, AccessControl  {
         prediction.amount = SafeMath.add(prediction.amount, amount);
         prediction.isClaimed = false;
         userRound[msg.sender].push(_roundId);
+
+        // send amount
+        token.safeTransferFrom(msg.sender, address(this), amount);
     }
 
     function claimReward(uint _roundId, address _address) public checkRound(_roundId) {
         require(round[_roundId].timeEndPrediction < block.timestamp, "Match is not end");
-        require(userPrediction[_roundId][_address].positionPredict != Position.None, "This round you did not prediction");
+        require(round[_roundId].positionWin != Position.None, "Waiting Result");
         require(userPrediction[_roundId][_address].amount > 0, "You not prediction");
         require(userPrediction[_roundId][_address].positionPredict == round[roundId].positionWin, "You Lose");
         require(!userPrediction[_roundId][_address].isClaimed ,"You already claim");
-        userPrediction[_roundId][_address].isClaimed = true;
 
         if(userPrediction[_roundId][_address].positionPredict == Position.Refund) {
             userPrediction[_roundId][_address].amount;
@@ -154,6 +168,10 @@ contract Bet is Ownable, AccessControl  {
                 uint userAmount = userPrediction[_roundId][_address].amount;
                 uint256 reward = (userAmount * totalAmount) / amountHome;
 
+                // claim
+                token.safeTransfer(_address, reward);
+                userPrediction[_roundId][_address].isClaimed = true;
+
                 emit Claim(_address, _roundId, reward);
             } 
             // Away Win
@@ -163,6 +181,10 @@ contract Bet is Ownable, AccessControl  {
                 uint userAmount = userPrediction[_roundId][_address].amount;
                 uint256 reward = (userAmount * totalAmount) / amountAway;
 
+                // claim
+                token.safeTransfer(_address, reward);
+                userPrediction[_roundId][_address].isClaimed = true;
+
                 emit Claim(_address, _roundId, reward);
             } 
             // Draw Win
@@ -171,6 +193,10 @@ contract Bet is Ownable, AccessControl  {
                 uint amountDraw = round[_roundId].amountDraw;
                 uint userAmount = userPrediction[_roundId][_address].amount;
                 uint256 reward = (userAmount * totalAmount) / amountDraw;
+
+                // claim
+                token.safeTransfer(_address, reward);
+                userPrediction[_roundId][_address].isClaimed = true;
 
                 emit Claim(_address, _roundId, reward);
             }
