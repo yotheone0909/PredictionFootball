@@ -159,7 +159,9 @@ contract Bet is Ownable, AccessControl  {
         require(!userPrediction[_roundId][_address].isClaimed ,"You already claim");
 
         if(userPrediction[_roundId][_address].positionPredict == Position.Refund) {
-            userPrediction[_roundId][_address].amount;
+            uint256 reward = userPrediction[_roundId][_address].amount;
+            token.safeTransfer(_address, reward);
+            userPrediction[_roundId][_address].isClaimed = true;
         } else if(userPrediction[_roundId][_address].positionPredict == round[_roundId].positionWin) {
             // Home Win
             if(round[_roundId].positionWin == Position.Home) {
