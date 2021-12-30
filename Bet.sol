@@ -214,7 +214,7 @@ contract Bet is Ownable, AccessControl  {
         }
         return roundIdOnRun;
     }
-
+    
     function getUserRound(address _address) public view returns(uint256[] memory) {
         return userRound[_address];
     }
