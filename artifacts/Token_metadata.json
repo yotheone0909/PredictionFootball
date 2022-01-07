@@ -413,7 +413,7 @@
 	},
 	"settings": {
 		"compilationTarget": {
-			"Token.sol": "Token"
+			"PredictionFootball/Token.sol": "Token"
 		},
 		"evmVersion": "london",
 		"libraries": {},
@@ -467,12 +467,12 @@
 				"dweb:/ipfs/QmRK2Y5Yc6BK7tGKkgsgn3aJEQGi5aakeSPZvS65PV8Xp3"
 			]
 		},
-		"Token.sol": {
-			"keccak256": "0x9782763c1fa16178532043827c11ddb4dca7c61ef68a75d390585016b37f7810",
+		"PredictionFootball/Token.sol": {
+			"keccak256": "0xb0c8c297a9929c62690f50d30af19976f7d94248d48edc7b71888ce2a102a3b1",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://f0cbe824999aa9a1e15ef57ab53df710949a63d22a11339237deb3ac9391b229",
-				"dweb:/ipfs/QmT5Wnruiu75VCETBPRfhoVtLrmwzRjE7niCvAApxXAwGQ"
+				"bzz-raw://682e96379776101a61e05d70a71b1421a6124fd181a451cc04a0d467141d7895",
+				"dweb:/ipfs/QmXASXi4mwf15D1KFu8tGb2tC1WqtAYsEcEj7Q26UZdjzw"
 			]
 		}
 	},

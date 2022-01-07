@@ -205,11 +205,11 @@ contract Bet is Ownable, AccessControl  {
         }
     }
 
-    function getRoundOnRun() public view returns (uint [] memory) {
-        uint256[] memory roundIdOnRun = new uint256[](roundId);
+    function getRoundOnRun() public view returns (Round [] memory) {
+        Round[] memory roundIdOnRun = new Round[](roundId);
         for(uint i = 0; i < roundId; i++) {
             if(round[i+1].positionWin == Position.None) {
-                roundIdOnRun[i] = i + 1 ;
+                roundIdOnRun[i] = round[i + 1] ;
             }
         }
         return roundIdOnRun;

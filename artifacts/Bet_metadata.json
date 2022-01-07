@@ -287,9 +287,61 @@
 				"name": "getRoundOnRun",
 				"outputs": [
 					{
-						"internalType": "uint256[]",
+						"components": [
+							{
+								"internalType": "enum Bet.Position",
+								"name": "positionWin",
+								"type": "uint8"
+							},
+							{
+								"internalType": "uint32",
+								"name": "timeCreatePrediction",
+								"type": "uint32"
+							},
+							{
+								"internalType": "uint32",
+								"name": "timeLockPrediction",
+								"type": "uint32"
+							},
+							{
+								"internalType": "uint32",
+								"name": "timeEndPrediction",
+								"type": "uint32"
+							},
+							{
+								"internalType": "uint48",
+								"name": "homeId",
+								"type": "uint48"
+							},
+							{
+								"internalType": "uint48",
+								"name": "awayId",
+								"type": "uint48"
+							},
+							{
+								"internalType": "uint256",
+								"name": "amountHome",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "amountAway",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "amountDraw",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "totalAmount",
+								"type": "uint256"
+							}
+						],
+						"internalType": "struct Bet.Round[]",
 						"name": "",
-						"type": "uint256[]"
+						"type": "tuple[]"
 					}
 				],
 				"stateMutability": "view",
@@ -667,7 +719,7 @@
 	},
 	"settings": {
 		"compilationTarget": {
-			"Bet.sol": "Bet"
+			"PredictionFootball/Bet.sol": "Bet"
 		},
 		"evmVersion": "london",
 		"libraries": {},
@@ -793,12 +845,12 @@
 				"dweb:/ipfs/QmfYuZxRfx2J2xdk4EXN7jKg4bUYEMTaYk9BAw9Bqn4o2Y"
 			]
 		},
-		"Bet.sol": {
-			"keccak256": "0xe6d6dd7119efa04ea8511b941bc2fa71c77325266f5cb63627daf8760e86c23b",
+		"PredictionFootball/Bet.sol": {
+			"keccak256": "0x0deff14bb08eee2141212f7d5a57bfcf21d4f4a92f6d8d621bb2690171b4b522",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://9638ab46e568138f9846b1623bc26402f8ff40eea4e7852e85d81c1a0eef218e",
-				"dweb:/ipfs/Qme12A7UYcjakdC7RwMjmFyKpBEFMZMHcZxWTUhzGhTjyR"
+				"bzz-raw://12c842340df8bc913f9e7ad973a53ddc8c7a124ac197fc8388af8d22dea11cab",
+				"dweb:/ipfs/QmfZUaop2SGpRXHo2QJhXr51UdCMXv8AwG5yqc5bUdEHjL"
 			]
 		}
 	},
