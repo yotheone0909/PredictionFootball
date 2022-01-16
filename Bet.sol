@@ -23,6 +23,7 @@ contract Bet is Ownable, AccessControl  {
         uint32 timeEndPrediction;
         uint48 homeId;
         uint48 awayId;
+        uint256 roundId;
         uint256 amountHome;
         uint256 amountAway;
         uint256 amountDraw;
@@ -89,6 +90,7 @@ contract Bet is Ownable, AccessControl  {
         roundId++;
         uint32 timeEnd = (timeEndPrediction + (8 * 60));
         Round storage roundCurrent = round[roundId];
+        roundCurrent.roundId = roundId;
         roundCurrent.homeId = homeId;
         roundCurrent.awayId = awayId;
         roundCurrent.positionWin = Position.None;
@@ -208,9 +210,7 @@ contract Bet is Ownable, AccessControl  {
     function getRoundOnRun() public view returns (Round [] memory) {
         Round[] memory roundIdOnRun = new Round[](roundId);
         for(uint i = 0; i < roundId; i++) {
-            if(round[i+1].positionWin == Position.None) {
-                roundIdOnRun[i] = round[i + 1] ;
-            }
+            roundIdOnRun[i] = round[i + 1] ;
         }
         return roundIdOnRun;
     }

@@ -320,6 +320,11 @@
 							},
 							{
 								"internalType": "uint256",
+								"name": "roundId",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
 								"name": "amountHome",
 								"type": "uint256"
 							},
@@ -557,6 +562,11 @@
 						"internalType": "uint48",
 						"name": "awayId",
 						"type": "uint48"
+					},
+					{
+						"internalType": "uint256",
+						"name": "roundId",
+						"type": "uint256"
 					},
 					{
 						"internalType": "uint256",
@@ -846,11 +856,11 @@
 			]
 		},
 		"PredictionFootball/Bet.sol": {
-			"keccak256": "0x0deff14bb08eee2141212f7d5a57bfcf21d4f4a92f6d8d621bb2690171b4b522",
+			"keccak256": "0x39c72cbf4a002e78b5cadcbd03823f7ba38fe6fae403f6bd97e2f6aebeb71b5c",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://12c842340df8bc913f9e7ad973a53ddc8c7a124ac197fc8388af8d22dea11cab",
-				"dweb:/ipfs/QmfZUaop2SGpRXHo2QJhXr51UdCMXv8AwG5yqc5bUdEHjL"
+				"bzz-raw://12d2537765dbb710479424d9929bd2578ac2b1eb43cb11c2abaa14a74bbc50e6",
+				"dweb:/ipfs/QmcuwAiD2HxPkFphGKXx84mqZUSoPWSzW5YupFJXMKSEFi"
 			]
 		}
 	},
