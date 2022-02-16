@@ -84,7 +84,7 @@ contract Bet is Ownable, AccessControl  {
         _grantRole(DEFAULT_ADMIN_ROLE , msg.sender);
     }
 
-    function createRound(uint8 homeId, uint8 awayId, uint32 timeLockPrediction, uint32 timeEndPrediction) public onlyRole(ADMIN_ROLE) {
+    function createRound(uint48 homeId, uint48 awayId, uint32 timeLockPrediction, uint32 timeEndPrediction) public onlyRole(ADMIN_ROLE) {
         require(homeId != awayId, "Can not Add id same");
         require(timeEndPrediction > block.timestamp, "Time Over");
         roundId++;
@@ -157,10 +157,10 @@ contract Bet is Ownable, AccessControl  {
         require(round[_roundId].timeEndPrediction < block.timestamp, "Match is not end");
         require(round[_roundId].positionWin != Position.None, "Waiting Result");
         require(userPrediction[_roundId][_address].amount > 0, "You not prediction");
-        require(userPrediction[_roundId][_address].positionPredict == round[roundId].positionWin, "You Lose");
+        require(userPrediction[_roundId][_address].positionPredict == round[roundId].positionWin || (userPrediction[_roundId][_address].positionPredict != Position.None && round[_roundId].positionWin == Position.Refund), "You Lose");
         require(!userPrediction[_roundId][_address].isClaimed ,"You already claim");
 
-        if(userPrediction[_roundId][_address].positionPredict == Position.Refund) {
+        if(round[_roundId].positionWin == Position.Refund) {
             uint256 reward = userPrediction[_roundId][_address].amount;
             token.safeTransfer(_address, reward);
             userPrediction[_roundId][_address].isClaimed = true;
